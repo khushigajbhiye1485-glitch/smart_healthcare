@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>🌐 Choose Language</h1>
+
+  <div class="lang-buttons">
+    <a href="{{ url_for('set_language', lang='en') }}"><button>English</button></a>
+    <a href="{{ url_for('set_language', lang='hi') }}"><button>हिंदी</button></a>
+    <a href="{{ url_for('set_language', lang='mr') }}"><button>मराठी</button></a>
+  </div>
+
+  <h2>🚨 Emergency?</h2>
+  <button onclick="sendSOS()" class="sos-btn">Send SOS</button>
+
+  <script>
+    function sendSOS() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          fetch("/api/send-sos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lat: lat, lon: lon })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.ok) {
+              alert("✅ SOS sent to " + data.to);
+            } else {
+              alert("❌ Failed: " + data.msg);
+            }
+          })
+          .catch(err => alert("❌ Error: " + err));
+        });
+      } else {
+        alert("Geolocation not supported on this device.");
+      }
+    }
+  </script>
+{% endblock %}

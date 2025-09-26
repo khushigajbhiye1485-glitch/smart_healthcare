@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>🚨 Emergency SOS</h1>
+  <button onclick="sendSOS()">Send SOS</button>
+
+  <script>
+    function sendSOS() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          fetch("/api/send-sos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lat: lat, lon: lon })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.ok) {
+              alert("✅ SOS sent to " + data.to);
+            } else {
+              alert("❌ Failed: " + data.msg);
+            }
+          })
+          .catch(err => alert("❌ Error: " + err));
+        });
+      } else {
+        alert("Geolocation not supported on this device.");
+      }
+    }
+  </script>
+{% endblock %}

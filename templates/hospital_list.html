@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Nearby Hospitals</h1>
+  {% for h in hospitals %}
+    <p>
+      <strong>{{ h.name }}</strong> ({{ h.specialties }})  
+      <a href="{{ url_for('hospital_detail', hospital_id=h.id) }}">Details</a> | 
+      <a href="{{ url_for('map_view', hospital_id=h.id) }}">Map</a>
+    </p>
+  {% endfor %}
+{% endblock %}
