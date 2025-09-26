@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Driver Dashboard</h1>
+  <p><strong>Name:</strong> {{ driver.name }}</p>
+  <p><strong>Email:</strong> {{ driver.email }}</p>
+  <p><strong>Phone:</strong> {{ driver.phone }}</p>
+  <p><strong>Available:</strong> {{ 'Yes' if driver.is_available else 'No' }}</p>
+
+  <form method="POST">
+    <button name="action" value="toggle" type="submit">
+      {% if driver.is_available %}Set Busy{% else %}Set Available{% endif %}
+    </button>
+  </form>
+
+  <p><a href="{{ url_for('logout') }}">Logout</a></p>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Register as Driver</h1>
+  <form method="POST">
+    <input name="name" placeholder="Full name" required><br><br>
+    <input name="email" placeholder="Email" type="email" required><br><br>
+    <input name="phone" placeholder="Phone (optional)"><br><br>
+    <input name="password" placeholder="Password" type="password" required><br><br>
+    <button type="submit">Register</button>
+  </form>
+  <p>Already registered? <a href="{{ url_for('login_driver') }}">Login here</a></p>
+{% endblock %}

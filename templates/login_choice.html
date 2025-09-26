@@ -1,11 +1,9 @@
-<h2>Language selected: {{ session.get('language', 'en') }}</h2>
-
 {% extends "base.html" %}
 {% block content %}
   <h1>Login As</h1>
   <ul>
     <li><a href="{{ url_for('login_patient') }}">Patient</a></li>
-    <li>Doctor (later)</li>
-    <li>Ambulance Driver (later)</li>
+    <li><a href="{{ url_for('login_doctor') }}">Doctor</a></li>
+    <li><a href="{{ url_for('login_driver') }}">Ambulance Driver</a></li>
   </ul>
 {% endblock %}
