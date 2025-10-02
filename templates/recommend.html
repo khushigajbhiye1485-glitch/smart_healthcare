@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hospital-list">
+  <h1>Recommended Hospitals {% if specialization %}for {{ specialization }}{% endif %}</h1>
+
+  {% if hospitals %}
+    <div class="hospital-grid">
+      {% for h in hospitals %}
+        <div class="hospital-card">
+          <h2>{{ h.name }}</h2>
+          <p><strong>Specialization:</strong> {{ h.specialization }}</p>
+          <p><strong>Machines:</strong> {{ h.machines }}</p>
+
+          {% if h.distance %}
+            <p><strong>📍 Distance:</strong> {{ "%.2f"|format(h.distance) }} km</p>
+          {% else %}
+            <p><strong>📍 Distance:</strong> Unknown</p>
+          {% endif %}
+
+          <div class="actions">
+            <a href="{{ url_for('hospital_detail', hospital_id=h.id, lat=patient_lat, lon=patient_lon) }}" class="btn-detail">ℹ View Details</a>
+            <a href="{{ url_for('map_view', hospital_id=h.id, lat=patient_lat, lon=patient_lon) }}" target="_blank" class="btn-map">🗺 View on Map</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No hospitals found.</p>
+  {% endif %}
+</div>
+
+<style>
+  /* keep the same card/grid CSS as your hospital_list or reuse your global CSS */
+  .hospital-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:16px; }
+  .hospital-card { padding:14px; background:#fff; border-radius:10px; box-shadow:0 3px 8px rgba(0,0,0,0.06); }
+  .actions { margin-top:10px; display:flex; gap:8px; }
+  .btn-detail { background:#28a745; color:#fff; padding:8px 10px; border-radius:6px; text-decoration:none; }
+  .btn-map { background:#007bff; color:#fff; padding:8px 10px; border-radius:6px; text-decoration:none; }
+</style>
+{% endblock %}

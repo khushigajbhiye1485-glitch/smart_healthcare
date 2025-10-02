@@ -1,7 +1,107 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>{{ hospital.name }}</h1>
-  <p>Specialties: {{ hospital.specialties }}</p>
-  <p>Facilities: {{ hospital.facilities }}</p>
-  <p>Contact: {{ hospital.contact }}</p>
+<div class="hospital-detail">
+  <h1>🏥 {{ hospital.name }}</h1>
+
+  <div class="info-card">
+    <h2>Specialization</h2>
+    <p>{{ hospital.specialization }}</p>
+  </div>
+
+  <div class="info-card">
+    <h2>Available Machines</h2>
+    <p>{{ hospital.machines }}</p>
+  </div>
+
+  <div class="info-card">
+    <h2>📍 Location</h2>
+    <div id="map"></div>
+  </div>
+
+  <div class="info-card contact-card">
+    <h2>📞 Contact</h2>
+    <p><strong>Email:</strong> {{ hospital.contact_email or 'Not provided' }}</p>
+    <p><strong>Phone:</strong> {{ hospital.contact_phone or 'Not provided' }}</p>
+  </div>
+
+  <div style="text-align: center; margin-top: 20px;">
+    <a href="{{ url_for('hospital_list') }}" class="btn-back">⬅ Back to Hospital List</a>
+  </div>
+</div>
+
+<!-- Leaflet Map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var lat = {{ hospital.latitude|default(0) }};
+    var lon = {{ hospital.longitude|default(0) }};
+
+    var map = L.map('map').setView([lat, lon], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([lat, lon]).addTo(map)
+      .bindPopup("🏥 {{ hospital.name }}")
+      .openPopup();
+  });
+</script>
+
+<style>
+  .hospital-detail {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+  }
+
+  .info-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+  }
+
+  .info-card:hover {
+    transform: translateY(-5px);
+  }
+
+  #map {
+    width: 100%;
+    height: 300px;
+    border-radius: 8px;
+  }
+
+  .contact-card p {
+    margin: 5px 0;
+  }
+
+  .btn-back {
+    display: inline-block;
+    padding: 10px 16px;
+    background: #007bff;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+
+  .btn-back:hover {
+    background: #0056b3;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 {% endblock %}

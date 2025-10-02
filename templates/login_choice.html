@@ -1,9 +1,72 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Login As</h1>
-  <ul>
-    <li><a href="{{ url_for('login_patient') }}">Patient</a></li>
-    <li><a href="{{ url_for('login_doctor') }}">Doctor</a></li>
-    <li><a href="{{ url_for('login_driver') }}">Ambulance Driver</a></li>
-  </ul>
+<div class="login-choice">
+  <h1>🔐 Login As</h1>
+
+  <div class="login-options">
+    <a href="{{ url_for('login_patient') }}" class="login-card patient">
+      👤 Patient
+    </a>
+    <a href="{{ url_for('login_doctor') }}" class="login-card doctor">
+      👨‍⚕️ Doctor
+    </a>
+    <a href="{{ url_for('login_driver') }}" class="login-card driver">
+      🚑 Ambulance Driver
+    </a>
+    <a href="{{ url_for('login_admin') }}" class="login-card admin">
+      🛡️ Admin
+    </a>
+  </div>
+</div>
+
+<style>
+  .login-choice {
+    text-align: center;
+    margin-top: 40px;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  .login-choice h1 {
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #2c3e50;
+  }
+
+  .login-options {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .login-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 120px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .login-card:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  }
+
+  .login-card.patient { background: linear-gradient(135deg, #007bff, #0056b3); }
+  .login-card.doctor { background: linear-gradient(135deg, #28a745, #1e7e34); }
+  .login-card.driver { background: linear-gradient(135deg, #ffc107, #e0a800); color: #212529; }
+  .login-card.admin  { background: linear-gradient(135deg, #dc3545, #b02a37); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 {% endblock %}

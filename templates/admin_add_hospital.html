@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Hospital | Admin</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #map {
+            height: 300px;
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Add New Hospital</h2>
+
+        <form method="POST">
+            <!-- Hospital Name -->
+            <label>Name:</label>
+            <input type="text" name="name" placeholder="Enter hospital name" required>
+
+            <!-- Specialization -->
+            <label>Specialization:</label>
+            <input list="specializations" name="specialization" placeholder="Choose or type specialization" required>
+            <datalist id="specializations">
+                <option value="Cardiology">
+                <option value="Neurology">
+                <option value="Orthopedics">
+                <option value="General Medicine">
+                <option value="Gynaecology">
+                <option value="ENT">
+                <option value="Dermatology">
+                <option value="Pediatrics">
+                <option value="Oncology">
+                <option value="Nephrology">
+                <option value="Urology">
+                <option value="Pulmonology">
+                <option value="Gastroenterology">
+                <option value="Endocrinology">
+                <option value="Psychiatry">
+                <option value="Rheumatology">
+                <option value="Ophthalmology">
+                <option value="Dental">
+                <option value="Emergency & Trauma">
+                <option value="Rehabilitation">
+            </datalist>
+
+            <!-- Machines -->
+            <label>Machines:</label>
+            <input list="machines" name="machines" placeholder="Choose or type machines">
+            <datalist id="machines">
+                <option value="ECG">
+                <option value="MRI">
+                <option value="CT Scan">
+                <option value="X-Ray">
+                <option value="Ventilator">
+                <option value="Ultrasound">
+                <option value="EEG">
+                <option value="Dialysis Machine">
+                <option value="Defibrillator">
+                <option value="Endoscopy Unit">
+                <option value="Radiotherapy Machine">
+                <option value="PET Scan">
+                <option value="Anesthesia Machine">
+                <option value="Infusion Pump">
+                <option value="Blood Analyzer">
+            </datalist>
+
+            <!-- Location -->
+            <label>Location (pick on map or enter manually):</label>
+            <div id="map"></div>
+
+            <label>Latitude:</label>
+            <input type="number" step="any" id="latitude" name="latitude" required>
+
+            <label>Longitude:</label>
+            <input type="number" step="any" id="longitude" name="longitude" required>
+
+            <button type="submit">➕ Add Hospital</button>
+        </form>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Create map centered on India
+        var map = L.map('map').setView([20.5937, 78.9629], 5);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var marker;
+
+        // Click on map → update lat/lon inputs
+        map.on('click', function(e) {
+            var lat = e.latlng.lat.toFixed(6);
+            var lon = e.latlng.lng.toFixed(6);
+
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lon;
+
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+        });
+
+        // If user types lat/lon manually → update map marker
+        function updateMapFromInputs() {
+            var lat = parseFloat(document.getElementById('latitude').value);
+            var lon = parseFloat(document.getElementById('longitude').value);
+
+            if (!isNaN(lat) && !isNaN(lon)) {
+                var newLatLng = L.latLng(lat, lon);
+                map.setView(newLatLng, 15);
+
+                if (marker) {
+                    marker.setLatLng(newLatLng);
+                } else {
+                    marker = L.marker(newLatLng).addTo(map);
+                }
+            }
+        }
+
+        document.getElementById('latitude').addEventListener('change', updateMapFromInputs);
+        document.getElementById('longitude').addEventListener('change', updateMapFromInputs);
+    </script>
+</body>
+</html>

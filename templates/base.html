@@ -1,33 +1,114 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Smart Health</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <title>Smart Healthcare</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- Simple CSS styling -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    nav {
+      background: #007bff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    nav .brand {
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    nav .links a {
+      color: #fff;
+      margin-left: 20px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.2s;
+    }
+
+    nav .links a:hover {
+      color: #ffd700;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Hide default Google Translate widget UI */
+    .goog-logo-link, .goog-te-gadget {
+      display: none !important;
+    }
+    .goog-te-banner-frame.skiptranslate {
+      display: none !important;
+    }
+    body {
+      top: 0px !important;
+    }
+  </style>
 </head>
 <body>
-  <div style="padding:12px;background:#fff;border-bottom:1px solid #eee;">
-    <a href="{{ url_for('language_selection') }}">Home</a> |
-    <a href="{{ url_for('login_choice') }}">Login</a>
-    {% if session.get('user_email') %}
-      | Logged in as {{ session.get('user_email') }} (<a href="{{ url_for('logout') }}">Logout</a>)
-    {% endif %}
-  </div>
-
-  <div style="max-width:900px;margin:20px auto;padding:18px;">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul style="background:#fff8db;border:1px solid #ffe59e;padding:10px;border-radius:6px;">
-        {% for msg in messages %}
-          <li>{{ msg }}</li>
-        {% endfor %}
-        </ul>
-        <br>
+  <nav>
+    <a href="{{ url_for('language_selection') }}" class="brand">🏥 Smart Healthcare</a>
+    <div class="links">
+      <a href="{{ url_for('hospital_list') }}">All Hospitals</a>
+      {% if session.get('user_email') %}
+        <a href="{{ url_for('logout') }}">Logout</a>
       {% endif %}
-    {% endwith %}
+    </div>
+  </nav>
 
+  <div class="container">
     {% block content %}{% endblock %}
   </div>
+
+  <!-- Hidden Google Translate -->
+  <div id="google_translate_element" style="display:none;"></div>
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,hi,mr', // add more like 'ta,bn,te,gu,kn'
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+
+    // Apply translation automatically based on saved session language
+    document.addEventListener("DOMContentLoaded", function () {
+      let selectedLang = "{{ session.get('language', 'en') }}";  
+      if (selectedLang !== "en") {
+        setTimeout(() => {
+          let iframe = document.querySelector("iframe.goog-te-menu-frame");
+          if (iframe) {
+            let innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+            let langLinks = innerDoc.querySelectorAll(".goog-te-menu2-item span.text");
+            langLinks.forEach(el => {
+              if (el.innerText.toLowerCase().includes(selectedLang)) {
+                el.click();
+              }
+            });
+          }
+        }, 1500); // wait until widget loads
+      }
+    });
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

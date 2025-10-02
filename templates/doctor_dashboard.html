@@ -1,9 +1,80 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Doctor Dashboard</h1>
-  <p>Welcome, {{ doctor.name }}</p>
-  <p>Email: {{ doctor.email }}</p>
-  <p>Specialization: {{ doctor.specialization }}</p>
+<div class="doctor-dashboard">
+  <h1>👨‍⚕️ Doctor Dashboard</h1>
 
-  <p><a href="{{ url_for('logout') }}">Logout</a></p>
+  <div class="doctor-card">
+    <h2>{{ doctor.name }}</h2>
+    <p><strong>Email:</strong> {{ doctor.email }}</p>
+    <p><strong>Specialization:</strong> {{ doctor.specialization }}</p>
+  </div>
+
+  <div class="actions">
+    <a href="{{ url_for('logout') }}" class="btn-logout">🚪 Logout</a>
+  </div>
+</div>
+
+<style>
+  .doctor-dashboard {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  h1 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+  }
+
+  .doctor-card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .doctor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  }
+
+  .doctor-card h2 {
+    margin-top: 0;
+    color: #007bff;
+  }
+
+  .doctor-card p {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #444;
+  }
+
+  .actions {
+    margin-top: 20px;
+  }
+
+  .btn-logout {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #dc3545;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .btn-logout:hover {
+    background: #b02a37;
+    transform: scale(1.05);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 {% endblock %}

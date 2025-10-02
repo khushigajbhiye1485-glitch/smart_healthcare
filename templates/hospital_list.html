@@ -1,11 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Nearby Hospitals</h1>
-  {% for h in hospitals %}
-    <p>
-      <strong>{{ h.name }}</strong> ({{ h.specialties }})  
-      <a href="{{ url_for('hospital_detail', hospital_id=h.id) }}">Details</a> | 
-      <a href="{{ url_for('map_view', hospital_id=h.id) }}">Map</a>
-    </p>
-  {% endfor %}
+  <h1>🏥 All Hospitals</h1>
+
+  {% if hospitals %}
+    <ul style="list-style: none; padding: 0;">
+      {% for h in hospitals %}
+        <li style="margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+          <strong>{{ h.name }}</strong> – {{ h.specialization }}
+          <br>Machines: {{ h.machines }}
+          {% if h.distance %}
+            <br>Distance: {{ "%.2f" | format(h.distance) }} km
+          {% endif %}
+
+          <!-- View on Map button -->
+          <br><a href="{{ url_for('map_view', hospital_id=h.id) }}" target="_blank"
+                 style="display:inline-block; margin-top:8px; padding:8px 14px;
+                        background-color:#007bff; color:white;
+                        border-radius:6px; text-decoration:none;">
+            🗺️ View on Map
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No hospitals found in the system.</p>
+  {% endif %}
 {% endblock %}

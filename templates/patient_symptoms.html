@@ -1,8 +1,57 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Enter Your Symptoms</h1>
-  <form method="POST">
-    <textarea name="symptoms" rows="5"></textarea><br>
-    <button type="submit">Submit</button>
+<div class="container">
+  <h2>Describe Your Symptoms</h2>
+
+  <form id="symptomForm" method="POST" action="{{ url_for('patient_symptoms') }}">
+    <textarea name="symptoms" rows="4" cols="60" placeholder="Describe how you feel..." required></textarea>
+
+    <!-- hidden fields filled by JS -->
+    <input type="hidden" id="lat" name="lat">
+    <input type="hidden" id="lon" name="lon">
+
+    <p style="margin-top:8px; color:#666; font-size:14px;">
+      If location detection fails you can enter coordinates manually:
+    </p>
+    <div style="display:flex; gap:10px;">
+      <input id="manualLat" type="text" placeholder="Latitude (e.g. 20.93)" style="flex:1;">
+      <input id="manualLon" type="text" placeholder="Longitude (e.g. 77.76)" style="flex:1;">
+    </div>
+
+    <br>
+    <button type="submit" onclick="syncManualCoords()">Find Hospitals</button>
   </form>
+
+  <script>
+    function setHiddenCoords(lat, lon){
+      document.getElementById('lat').value = lat;
+      document.getElementById('lon').value = lon;
+      // keep manual fields in sync
+      document.getElementById('manualLat').value = lat;
+      document.getElementById('manualLon').value = lon;
+    }
+
+    function syncManualCoords(){
+      // if manual fields filled, overwrite hidden inputs before submit
+      const mlat = document.getElementById('manualLat').value.trim();
+      const mlon = document.getElementById('manualLon').value.trim();
+      if (mlat && mlon) {
+        document.getElementById('lat').value = mlat;
+        document.getElementById('lon').value = mlon;
+      }
+    }
+
+    // Try to get geolocation on page load
+    document.addEventListener('DOMContentLoaded', function(){
+      if (navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(function(pos){
+          setHiddenCoords(pos.coords.latitude.toFixed(6), pos.coords.longitude.toFixed(6));
+        }, function(err){
+          console.warn("Geolocation failed:", err);
+          // leave manual fields for user
+        }, { enableHighAccuracy: true, timeout: 7000 });
+      }
+    });
+  </script>
+</div>
 {% endblock %}

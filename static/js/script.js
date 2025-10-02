@@ -10,3 +10,4 @@ fetch('/api/send-sos', {
 .catch(err => {
   console.error("Error parsing JSON:", err);
 });
+

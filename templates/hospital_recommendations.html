@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="recommend-container">
+  <h1>🏥 Recommended Hospitals for <span class="highlight">{{ specialty }}</span></h1>
+
+  {% if hospitals %}
+    <div class="hospital-list">
+      {% for h in hospitals %}
+        <div class="hospital-card">
+          <h2>{{ h.name }}</h2>
+          <p><strong>Specialization:</strong> {{ h.specialization }}</p>
+          <p><strong>Machines:</strong> {{ h.machines }}</p>
+          <p><strong>Distance:</strong> {{ "%.2f"|format(h.distance) }} km</p>
+
+          <!-- View on Map button -->
+          <a href="{{ url_for('map_view', hospital_id=h.id) }}" target="_blank" class="btn-map">
+            🗺️ View on Map
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="no-result">❌ No matching hospitals found.</p>
+  {% endif %}
+</div>
+
+<style>
+  .recommend-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px;
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  h1 {
+    font-size: 2.2em;
+    margin-bottom: 30px;
+    color: #2c3e50;
+  }
+
+  .highlight {
+    color: #e74c3c;
+    font-weight: bold;
+  }
+
+  .hospital-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .hospital-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.2s, box-shadow 0.3s;
+  }
+
+  .hospital-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  }
+
+  .hospital-card h2 {
+    margin-top: 0;
+    color: #007bff;
+    font-size: 1.4em;
+  }
+
+  .hospital-card p {
+    margin: 6px 0;
+    color: #444;
+  }
+
+  .btn-map {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 16px;
+    background: #007bff;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .btn-map:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+  }
+
+  .no-result {
+    font-size: 1.2em;
+    color: #888;
+    margin-top: 20px;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+{% endblock %}

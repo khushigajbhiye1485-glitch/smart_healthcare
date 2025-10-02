@@ -3,4 +3,4 @@ flask_sqlalchemy
 geopy
 requests
 python-dotenv
-
+rapidfuzz

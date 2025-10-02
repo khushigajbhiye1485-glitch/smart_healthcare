@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="status-container">
+    <h1>🚨 SOS Notification</h1>
+
+    {% if success %}
+      <div class="status success">
+        ✅ SOS sent successfully to <strong>{{ recipient }}</strong>
+      </div>
+    {% else %}
+      <div class="status error">
+        ❌ Failed to send SOS.<br>
+        {{ message }}
+      </div>
+    {% endif %}
+
+    <a href="{{ url_for('language_selection') }}" class="btn-home">🏠 Back to Home</a>
+  </div>
+
+  <style>
+    .status-container {
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+      text-align: center;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .status { margin: 20px 0; padding: 15px; border-radius: 6px; font-size: 18px; }
+    .status.success { background: #e6ffed; color: #2e7d32; }
+    .status.error { background: #ffeaea; color: #c62828; }
+    .btn-home {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+    .btn-home:hover { background: #0056b3; }
+  </style>
+{% endblock %}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Your Location</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
+    <style>
+        #map { height: 400px; margin-bottom: 15px; }
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        input[type=text] { padding: 6px; width: 100%; margin: 5px 0; }
+        button { padding: 10px 15px; background: #28a745; color: white; border: none; cursor: pointer; }
+        button:hover { background: #218838; }
+    </style>
+</head>
+<body>
+    <h2>📍 Select Your Location</h2>
+    <p>You can allow automatic detection, search by place, or click on the map to adjust.</p>
+
+    <div id="map"></div>
+
+    <form method="POST" action="/save-location">
+        <label>Latitude</label>
+        <input type="text" id="lat" name="lat" readonly>
+
+        <label>Longitude</label>
+        <input type="text" id="lon" name="lon" readonly>
+
+        <button type="submit">Save Location</button>
+    </form>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script>
+        // Initialize map
+        var map = L.map('map').setView([20.5937, 78.9629], 5); // default India view
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var marker;
+
+        // Manual marker placement on click
+        map.on('click', function(e) {
+            if (marker) map.removeLayer(marker);
+            marker = L.marker(e.latlng).addTo(map);
+            document.getElementById("lat").value = e.latlng.lat;
+            document.getElementById("lon").value = e.latlng.lng;
+        });
+
+        // Auto-detect user location
+        map.locate({setView: true, maxZoom: 16});
+
+        function onLocationFound(e) {
+            if (marker) map.removeLayer(marker);
+            marker = L.marker(e.latlng).addTo(map);
+            document.getElementById("lat").value = e.latlng.lat;
+            document.getElementById("lon").value = e.latlng.lng;
+        }
+
+        function onLocationError(e) {
+            alert("⚠️ Could not detect your location. Please search or click on the map.");
+        }
+
+        map.on('locationfound', onLocationFound);
+        map.on('locationerror', onLocationError);
+
+        // Add search bar (Nominatim geocoder)
+        L.Control.geocoder({
+            defaultMarkGeocode: false
+        })
+        .on('markgeocode', function(e) {
+            var latlng = e.geocode.center;
+            if (marker) map.removeLayer(marker);
+            marker = L.marker(latlng).addTo(map);
+            map.setView(latlng, 15);
+            document.getElementById("lat").value = latlng.lat;
+            document.getElementById("lon").value = latlng.lng;
+        })
+        .addTo(map);
+    </script>
+</body>
+</html>

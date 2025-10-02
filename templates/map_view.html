@@ -1,5 +1,76 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Map for {{ hospital.name }}</h1>
-  <p>Map integration (Leaflet) will go here later.</p>
+  <h2>{{ hospital.name }}</h2>
+  <p><strong>Specialization:</strong> {{ hospital.specialization }}</p>
+  <p><strong>Machines:</strong> {{ hospital.machines }}</p>
+
+  <div id="map" style="height:500px; border-radius:10px; margin-top:20px;"></div>
+
+  <script>
+    var hospitalLat = {{ hospital.latitude }};
+    var hospitalLon = {{ hospital.longitude }};
+    var patientLat = {{ patient_lat if patient_lat else 'null' }};
+    var patientLon = {{ patient_lon if patient_lon else 'null' }};
+
+    // Map initialization
+    var map = L.map('map').setView([hospitalLat, hospitalLon], 13);
+
+    // Base layers
+    var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    var satellite = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenTopoMap'
+    });
+
+    // Layer control
+    L.control.layers({ "Street Map": osm, "Satellite": satellite }).addTo(map);
+
+    // Hospital marker
+    var hospitalMarker = L.marker([hospitalLat, hospitalLon], {
+      title: "{{ hospital.name }}",
+      draggable: false
+    }).addTo(map)
+      .bindPopup("<b>{{ hospital.name }}</b><br>Hospital Location");
+
+    // Patient marker
+    if (patientLat && patientLon) {
+      var patientMarker = L.marker([patientLat, patientLon], {
+        title: "Patient Location",
+        draggable: false,
+        icon: L.icon({
+          iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+          iconSize: [32, 32]
+        })
+      }).addTo(map)
+        .bindPopup("🏠 Patient Location");
+
+      // Route (polyline)
+      var latlngs = [
+        [patientLat, patientLon],
+        [hospitalLat, hospitalLon]
+      ];
+      var polyline = L.polyline(latlngs, {
+        color: 'blue',
+        dashArray: '5,10',
+        weight: 3
+      }).addTo(map);
+
+      map.fitBounds(polyline.getBounds());
+
+      // Show distance on click
+      polyline.bindPopup("📏 Distance: " +
+        map.distance([patientLat, patientLon], [hospitalLat, hospitalLon]).toFixed(0) +
+        " meters");
+    }
+
+    // Extra: click anywhere → show coordinates
+    map.on('click', function(e) {
+      L.popup()
+        .setLatLng(e.latlng)
+        .setContent("📍 You clicked at " + e.latlng.lat.toFixed(5) + ", " + e.latlng.lng.toFixed(5))
+        .openOn(map);
+    });
+  </script>
 {% endblock %}

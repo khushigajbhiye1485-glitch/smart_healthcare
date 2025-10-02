@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>🌐 Choose Language</h1>
+<div class="language-container">
+  <h1>🌐 Choose Your Language</h1>
 
   <div class="lang-buttons">
     <a href="{{ url_for('set_language', lang='en') }}"><button>English</button></a>
@@ -8,34 +9,116 @@
     <a href="{{ url_for('set_language', lang='mr') }}"><button>मराठी</button></a>
   </div>
 
-  <h2>🚨 Emergency?</h2>
-  <button onclick="sendSOS()" class="sos-btn">Send SOS</button>
+  <h2 class="emergency-title">🚨 Emergency?</h2>
+  <button onclick="sendSOS()" class="sos-btn">🚑 Send SOS</button>
+  <p class="sos-subtext">Instantly alert the nearest ambulance driver with your live location</p>
+</div>
 
-  <script>
-    function sendSOS() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
+<script>
+  function sendSOS() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
 
-          fetch("/api/send-sos", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ lat: lat, lon: lon })
-          })
-          .then(res => res.json())
-          .then(data => {
-            if (data.ok) {
-              alert("✅ SOS sent to " + data.to);
-            } else {
-              alert("❌ Failed: " + data.msg);
-            }
-          })
-          .catch(err => alert("❌ Error: " + err));
-        });
-      } else {
-        alert("Geolocation not supported on this device.");
-      }
+        fetch("/api/send-sos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ lat: lat, lon: lon })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.ok) {
+            alert("✅ SOS sent to " + data.to);
+          } else {
+            alert("❌ Failed: " + data.msg);
+          }
+        })
+        .catch(err => alert("❌ Error: " + err));
+      });
+    } else {
+      alert("Geolocation not supported on this device.");
     }
-  </script>
+  }
+</script>
+
+<style>
+  .language-container {
+    text-align: center;
+    margin-top: 60px;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  h1 {
+    font-size: 2.2em;
+    margin-bottom: 30px;
+    color: #2c3e50;
+  }
+
+  .lang-buttons {
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .lang-buttons button {
+    padding: 14px 28px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 8px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .lang-buttons button:hover {
+    background: #0056b3;
+    transform: translateY(-3px);
+  }
+
+  .emergency-title {
+    margin-top: 20px;
+    font-size: 1.6em;
+    color: #dc3545;
+  }
+
+  .sos-btn {
+    margin-top: 15px;
+    font-size: 1.3em;
+    padding: 16px 40px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 0 18px rgba(220, 53, 69, 0.6);
+    transition: transform 0.2s, background 0.3s;
+    animation: pulse 1.5s infinite;
+  }
+
+  .sos-btn:hover {
+    background: #b71c1c;
+    transform: scale(1.08);
+  }
+
+  .sos-subtext {
+    margin-top: 12px;
+    font-size: 0.95em;
+    color: #555;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 10px rgba(220,53,69,0.5); }
+    50% { box-shadow: 0 0 25px rgba(220,53,69,1); }
+    100% { box-shadow: 0 0 10px rgba(220,53,69,0.5); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 {% endblock %}

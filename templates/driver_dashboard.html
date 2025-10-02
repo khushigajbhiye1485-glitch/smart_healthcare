@@ -1,16 +1,106 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Driver Dashboard</h1>
-  <p><strong>Name:</strong> {{ driver.name }}</p>
-  <p><strong>Email:</strong> {{ driver.email }}</p>
-  <p><strong>Phone:</strong> {{ driver.phone }}</p>
-  <p><strong>Available:</strong> {{ 'Yes' if driver.is_available else 'No' }}</p>
+<div class="dashboard-container">
+  <div class="dashboard-card">
+    <h1>🚑 Driver Dashboard</h1>
 
-  <form method="POST">
-    <button name="action" value="toggle" type="submit">
-      {% if driver.is_available %}Set Busy{% else %}Set Available{% endif %}
-    </button>
-  </form>
+    <div class="driver-info">
+      <p><strong>Name:</strong> {{ driver.name }}</p>
+      <p><strong>Email:</strong> {{ driver.email }}</p>
+      <p><strong>Phone:</strong> {{ driver.phone }}</p>
+      <p>
+        <strong>Status:</strong> 
+        <span class="status {{ 'available' if driver.is_available else 'busy' }}">
+          {{ '✅ Available' if driver.is_available else '❌ Busy' }}
+        </span>
+      </p>
+    </div>
 
-  <p><a href="{{ url_for('logout') }}">Logout</a></p>
+    <form method="POST">
+      <button name="action" value="toggle" type="submit" class="toggle-btn">
+        {% if driver.is_available %}🚫 Set Busy{% else %}✅ Set Available{% endif %}
+      </button>
+    </form>
+
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+  </div>
+</div>
+
+<style>
+  .dashboard-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+  }
+
+  .dashboard-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    width: 400px;
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    color: #007bff;
+  }
+
+  .driver-info p {
+    margin: 10px 0;
+    font-size: 15px;
+    color: #333;
+  }
+
+  .status.available {
+    color: green;
+    font-weight: bold;
+  }
+
+  .status.busy {
+    color: red;
+    font-weight: bold;
+  }
+
+  .toggle-btn {
+    margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .toggle-btn:hover {
+    background: #218838;
+  }
+
+  .logout-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 16px;
+    background: #dc3545;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+
+  .logout-btn:hover {
+    background: #c82333;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 {% endblock %}

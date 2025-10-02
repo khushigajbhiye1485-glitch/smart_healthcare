@@ -1,10 +1,88 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Driver Login</h1>
-  <form method="POST">
-    <input name="email" placeholder="Email" type="email" required><br><br>
-    <input name="password" placeholder="Password" type="password" required><br><br>
+<div class="login-container">
+  <h1>🚑 Driver Login</h1>
+  <form method="POST" class="login-form">
+    <input name="email" placeholder="📧 Email" type="email" required>
+    <input name="password" placeholder="🔒 Password" type="password" required>
     <button type="submit">Login</button>
   </form>
-  <p>Not registered? <a href="{{ url_for('register_driver') }}">Register here</a></p>
+  <p class="register-link">Not registered? <a href="{{ url_for('register_driver') }}">Register here</a></p>
+</div>
+
+<style>
+  .login-container {
+    max-width: 400px;
+    margin: 60px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  .login-container h1 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 26px;
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .login-form input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.2s;
+  }
+
+  .login-form input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+  }
+
+  .login-form button {
+    padding: 12px;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .login-form button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  }
+
+  .register-link {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+
+  .register-link a {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .register-link a:hover {
+    text-decoration: underline;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 {% endblock %}

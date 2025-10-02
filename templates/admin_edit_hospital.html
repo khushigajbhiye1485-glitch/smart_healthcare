@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Hospital | Smart Healthcare</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 25px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 12px;
+            display: block;
+            color: #444;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0,123,255,0.3);
+        }
+
+        #map {
+            height: 300px;
+            width: 100%;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 18px;
+            margin: 0 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .cancel-btn {
+            background: #6c757d;
+        }
+
+        .cancel-btn:hover {
+            background: #5a6268;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Smart Healthcare - Admin Panel</h1>
+    </header>
+
+    <div class="container">
+        <h2>✏️ Edit Hospital</h2>
+
+        <form method="POST">
+            <label>Name:</label>
+            <input type="text" name="name" value="{{ hospital.name }}" required>
+
+            <label>Specialization:</label>
+            <input list="specializations" name="specialization" value="{{ hospital.specialization }}" required>
+            <datalist id="specializations">
+                <option value="Cardiology">
+                <option value="Neurology">
+                <option value="Orthopedics">
+                <option value="General">
+                <option value="Gynaecology">
+                <option value="ENT">
+                <option value="Dermatology">
+                <option value="Oncology">
+                <option value="Pediatrics">
+                <option value="Urology">
+            </datalist>
+
+            <label>Machines:</label>
+            <input list="machines" name="machines" value="{{ hospital.machines }}">
+            <datalist id="machines">
+                <option value="ECG">
+                <option value="MRI">
+                <option value="X-Ray">
+                <option value="Ventilator">
+                <option value="Ultrasound">
+                <option value="CT Scan">
+                <option value="EEG">
+                <option value="Dialysis Machine">
+                <option value="Defibrillator">
+                <option value="Blood Analyzer">
+            </datalist>
+
+            <label>Location (pick on map or enter manually):</label>
+            <div id="map"></div>
+
+            <label>Latitude:</label>
+            <input type="number" step="any" id="latitude" name="latitude" value="{{ hospital.latitude }}" required>
+
+            <label>Longitude:</label>
+            <input type="number" step="any" id="longitude" name="longitude" value="{{ hospital.longitude }}" required>
+
+            <div class="buttons">
+                <button type="submit">💾 Save Changes</button>
+                <a href="{{ url_for('admin_hospitals') }}">
+                    <button type="button" class="cancel-btn">❌ Cancel</button>
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([{{ hospital.latitude }}, {{ hospital.longitude }}], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var marker = L.marker([{{ hospital.latitude }}, {{ hospital.longitude }}]).addTo(map);
+
+        map.on('click', function(e) {
+            var lat = e.latlng.lat.toFixed(6);
+            var lon = e.latlng.lng.toFixed(6);
+
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lon;
+            marker.setLatLng(e.latlng);
+        });
+
+        function updateMapFromInputs() {
+            var lat = parseFloat(document.getElementById('latitude').value);
+            var lon = parseFloat(document.getElementById('longitude').value);
+
+            if (!isNaN(lat) && !isNaN(lon)) {
+                var newLatLng = L.latLng(lat, lon);
+                map.setView(newLatLng, 15);
+                marker.setLatLng(newLatLng);
+            }
+        }
+
+        document.getElementById('latitude').addEventListener('change', updateMapFromInputs);
+        document.getElementById('longitude').addEventListener('change', updateMapFromInputs);
+    </script>
+</body>
+</html>
